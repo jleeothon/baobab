@@ -1,0 +1,72 @@
+[
+    {
+        "gender": "male",
+        "owns car": "0",
+        "cost": "cheap",
+        "income": "low",
+        "transportation": "bus"
+    },
+    {
+        "gender": "male",
+        "owns car": "1",
+        "cost": "cheap",
+        "income": "medium",
+        "transportation": "bus"
+    },
+    {
+        "gender": "female",
+        "owns car": "1",
+        "cost": "cheap",
+        "income": "medium",
+        "transportation": "train"
+    },
+    {
+        "gender": "female",
+        "owns car": "0",
+        "cost": "cheap",
+        "income": "low",
+        "transportation": "bus"
+    },
+    {
+        "gender": "male",
+        "owns car": "1",
+        "cost": "cheap",
+        "income": "medium",
+        "transportation": "bus"
+    },
+    {
+        "gender": "male",
+        "owns car": "0",
+        "cost": "standard",
+        "income": "medium",
+        "transportation": "train"
+    },
+    {
+        "gender": "female",
+        "owns car": "1",
+        "cost": "standard",
+        "income": "medium",
+        "transportation": "train"
+    },
+    {
+        "gender": "female",
+        "owns car": "1",
+        "cost": "expensive",
+        "income": "high",
+        "transportation": "car"
+    },
+    {
+        "gender": "male",
+        "owns car": "2",
+        "cost": "expensive",
+        "income": "medium",
+        "transportation": "car"
+    },
+    {
+        "gender": "female",
+        "owns car": "2",
+        "cost": "expensive",
+        "income": "high",
+        "transportation": "car"
+    }
+]
