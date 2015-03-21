@@ -6,13 +6,18 @@ class DecisionTree
     #  The first decision tree node
     attr_reader :root
 
-    def initialize dataset, class_var
-        entropy = dataset.entropy(class_var)
-        @root = DecisionTreeNode.new self, nil, nil, entropy
-    end
+    # The class variable of interest in this decision tree.
+    attr_reader :class_var
 
-    def build_tree subset, node
-        
+    # The underlying dataset
+    attr_reader :dataset
+
+    def initialize dataset, class_var
+        @dataset = dataset
+        @class_var = class_var
+        entropy = dataset.entropy class_var
+        @root = DecisionTreeNode.new self, nil, nil, entropy
+        @root.build_subtree
     end
 
 end
@@ -29,23 +34,67 @@ class DecisionTreeNode
     attr_reader :value
 
     # The decision tree
-    attr_reader :decision_tree
+    attr_reader :tree
 
     attr_reader :entropy_before
 
     attr_accessor :next_variable
 
-    def initialize decision_tree, variable, value, entropy_before
+    # Accumulates the conditions down the tree
+    attr_reader :conditions
+
+    # The conditional probability that variable=value
+    attr_reader :probability
+
+    def initialize tree, variable, value, entropy_before, conditions=nil
         @variable = variable
         @value = value
-        @decision_tree = decision_tree
+        @tree = tree
         @entropy_before = entropy_before
+        @conditions = if conditions then conditions else {} end
     end
 
+    def subset
+        Dataset.new(self.tree.dataset.subset(self.conditions))
+    end
+
+    def pending_attrs
+        self.tree.dataset.column_names.reject do |name|
+            self.tree.class_var == name or @conditions.include? name
+        end
+    end
+
+    def build_subtree
+        subset = self.subset
+        subset_count = self.subset.count
+        entropies = self.entropies
+        inf_gain = entropies.each.with_object({}) do |(a, e), o|
+            o[a] = @entropy_before - e
+        end
+        puts entropies
+        puts inf_gain
+    end
+
+    # Returns a hash of {attribute, entropy} given that we divide the dataset
+    # on attribute.
+    def entropies
+        self.pending_attrs.each.with_object({}) do |a, o|
+            values = self.tree.dataset.column_values(a)
+            val_probabilities = values.each.with_object({}) do |v, o|
+                o[v] = subset.probability a, v
+            end
+            val_entropies = values.each.with_object({}) do |v, o|
+                o[v] = subset.subset({a => v}).entropy(self.tree.class_var)
+            end
+            o[a] = values.reduce(0) do |memo, v|
+                memo += val_entropies[v] * val_probabilities[v]
+            end
+        end
+    end
 end
 
-# Represents a dataset. Is an array of hashes where all hashes contain the same
-# keys.
+# Represents a dataset or subset thereof.
+# Is an array of hashes where all hashes contain the same keys.
 class Dataset < Array
 
     # Receives an array of hashes. All hashes must contain the same keys.
@@ -61,34 +110,43 @@ class Dataset < Array
         self.new JSON.parse(text)
     end
 
+    def attribute_names class_var
+        self.column_names.reject{|name| name == class_var}
+    end
+
     # Returns an array of the attribute names in the dataset
-    def attribute_names dataset
-        dataset[0].keys
+    def column_names
+        self[0].keys
     end
 
     # Returns an array of the values of an attribute in the dataset
-    def attribute_values attribute
+    def column_values attribute
         Set.new(self.map{|row| row[attribute]}).to_a
     end
 
-    def entropy class_var, **conditions
-        subset = self.select do |row|
-            conditions.reduce(true) do |memo, (cond_var, cond_val)|
-                memo and row[cond_var] == cond_val
+    # Gets a subset with given conditions. Keys must be of the same type as
+    # in the dataset (be careful with symbols).
+    def subset conditions
+        rows = self.select do |row|
+            conditions.reduce(true) do |memo, (var, val)|
+                memo and row[var] == val
             end
         end
-        class_vals = self.attribute_values(class_var)
-        class_vals.reduce(0) do |memo, class_val|
-            memo + partial_entropy(probability(subset, class_var, class_val))
+        Dataset.new rows
+    end
+
+    def entropy class_var
+        class_vals = self.column_values(class_var)
+        probabilities = class_vals.map do |class_val|
+            self.probability(class_var, class_val)
         end
+        Shannon::entropy *probabilities
     end
 
-    def probability subset, class_var, class_val
-        subset.count{|r| r[class_var] == class_val}.fdiv(subset.count)
-    end
-
-    def partial_entropy probability
-        probability * Math::log2(1 / probability)
+    # Evaluates the probability that var be val in this dataset.
+    # Can also be used for subsets.
+    def probability var, val
+        self.count{|r| r[var] == val}.fdiv(self.count)
     end
 
     def validate
@@ -104,3 +162,15 @@ class Dataset < Array
     end
 end
 
+module Shannon
+
+    def self.entropy *probabilities
+        probabilities.reduce(0) do |memo, p|
+            memo + self.entropy_term(p)
+        end
+    end
+
+    def self.entropy_term probability
+        probability * Math::log2(1 / probability)
+    end
+end
