@@ -1,12 +1,35 @@
-require 'baobab'
+require 'minitest/autorun'
 
-dataset = Dataset::from_json("test/dataset.json")
-puts(dataset)
-t = DecisionTree.new dataset, 'transportation'
-puts t.root.entropy_before
+load 'baobab.rb'
 
+class TestDataset < MiniTest::Test
+    def setup
+        @dataset = Dataset::from_json("test/dataset.json")
+        @tree = DecisionTree.new @dataset, 'transportation'
+    end
 
-puts
-puts
-puts dataset.subset({'cost' => 'standard'})
-puts
+    def test_tree_representation
+        e =
+"ROOT (1.571)
+  cost => expensive (0.361)
+    transportation => car (0.0)
+  cost => standard (0.361)
+    transportation => train (0.0)
+  cost => cheap (0.361)
+    gender => female (0.4)
+      transportation => train (0.0)
+    gender => male (0.4)
+      transportation => bus (0.0)
+"
+        assert_equal e, @tree.to_s
+    end
+
+    def test_from_json
+        example = {"gender"=>"male", "owns car"=>"0", "cost"=>"cheap", "income"=>"low", "transportation"=>"bus"}
+        assert_includes @dataset, example
+    end
+
+    def test_tree_entropy
+        assert_in_delta @tree.root.entropy, 1.5709
+    end
+end
