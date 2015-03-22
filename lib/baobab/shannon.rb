@@ -1,3 +1,4 @@
+
 module Shannon
 
     def self.entropy *probabilities

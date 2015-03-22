@@ -24,6 +24,7 @@ class DecisionTree
         @root.build_subtree
     end
 
+    # Prints the decision depth-first with the respective entropy values.
     def to_s
         s = ""
         nodes = [[0, @root]]
@@ -38,6 +39,8 @@ class DecisionTree
         return s
     end
 
+    # Receives attributes and their values (they must be all defined).
+    # Returns the value of the predicted class value.
     def query values
         if values.keys != @dataset.attribute_names(@class_var)
             raise "Query does not fit all variables"

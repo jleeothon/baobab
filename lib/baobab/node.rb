@@ -1,3 +1,4 @@
+
 class DecisionTreeNode
 
     # A list of nodes
@@ -56,6 +57,8 @@ class DecisionTreeNode
         end
     end
 
+    # Returns a subset selected on all the parent node's conditions plus this
+    # node's attribute and its value.
     def full_conditions
         if @variable
             conditions.merge({@variable => @value})
@@ -123,13 +126,13 @@ class DecisionTreeNode
             v0 = self.subset[0][@tree.class_var]
             self.subset.slice(1...-1).reduce(v0) do |memo, row|
                 if memo != row[@tree.class_var]
-                    return false
+                    return nil
                 else
                     memo
                 end
             end
         else
-            false
+            nil
         end
 
     end
@@ -140,18 +143,21 @@ class DecisionTreeNode
         if self.pending_attrs.empty? then
             self.most_common_value
         else
-            false
+            nil
         end
     end
 
+    # If the subset is empty, returns the most common value in the parent
+    # node's subset.
     def try_finish_empty_subset
         if self.subset.empty?
             @parent.most_common_value
         else
-            false
+            nil
         end
     end
 
+    # Returns the most common class value in the dataset.
     def most_common_value
         class_var = @tree.class_var
         class_values = @tree.dataset.column_values(class_var)

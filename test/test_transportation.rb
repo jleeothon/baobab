@@ -2,9 +2,9 @@ require 'minitest/autorun'
 
 load 'baobab.rb'
 
-class TestDataset < MiniTest::Test
+class TestTransportation < MiniTest::Test
     def setup
-        @dataset = Dataset::from_json("test/dataset.json")
+        @dataset = Dataset::from_json("test/transportation.json")
         @tree = DecisionTree.new @dataset, 'transportation'
     end
 
