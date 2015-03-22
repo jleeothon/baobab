@@ -38,4 +38,24 @@ class DecisionTree
         return s
     end
 
+    def query values
+        if values.keys != @dataset.attribute_names(@class_var)
+            raise "Query does not fit all variables"
+        end
+        node = @root
+        while node.variable != @class_var
+            if node.next_attribute
+                if node.children.count > 1
+                    val = values[node.next_attribute]
+                    node = node.children.select do |child|
+                        child.value == val
+                    end[0]
+                else
+                    node = node.children[0]
+                end
+            end
+        end
+        node.value
+    end
+
 end

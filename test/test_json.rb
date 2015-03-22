@@ -32,4 +32,14 @@ class TestDataset < MiniTest::Test
     def test_tree_entropy
         assert_in_delta @tree.root.entropy, 1.5709
     end
+
+    def test_query_1
+        r = @tree.query({"gender"=>"male", "owns car"=>1, "cost"=>"standard", "income"=>"high"})
+        assert_equal 'train', r
+    end
+
+    def test_query_2
+        r = @tree.query({"gender"=>"female", "owns car"=>1, "cost"=>"cheap", "income"=>"high"})
+        assert_equal 'train', r
+    end
 end

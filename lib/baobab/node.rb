@@ -14,7 +14,7 @@ class DecisionTreeNode
 
     attr_reader :entropy
 
-    attr_accessor :next_variable
+    attr_accessor :next_attribute
 
     # Accumulates the conditions down the tree
     attr_reader :conditions
@@ -22,10 +22,10 @@ class DecisionTreeNode
     # The conditional probability that variable=value
     attr_reader :probability
 
-    def initialize tree, parent, attribute, value, entropy, conditions=nil
+    def initialize tree, parent, variable, value, entropy, conditions=nil
         @tree = tree
         @parent = parent
-        @attribute = attribute
+        @variable = variable
         @value = value
         @entropy = entropy
         @conditions = conditions ? conditions : {}
@@ -34,7 +34,7 @@ class DecisionTreeNode
     end
 
     def to_s
-        s = @attribute ? "#{@attribute} => #{@value}" : "ROOT"
+        s = @variable ? "#{@variable} => #{@value}" : "ROOT"
         s += " (#{@entropy.round(3)})"
     end
 
@@ -57,8 +57,8 @@ class DecisionTreeNode
     end
 
     def full_conditions
-        if @attribute
-            conditions.merge({@attribute => @value})
+        if @variable
+            conditions.merge({@variable => @value})
         else
             conditions
         end
@@ -75,7 +75,7 @@ class DecisionTreeNode
             o[a] = @entropy - e
         end
         max_attr, max_gain = inf_gain.max_by{|v, g| g}
-        self.next_variable = max_attr
+        self.next_attribute = max_attr
         @children += self.tree.dataset.column_values(max_attr).map do |value|
             conditions = self.full_conditions
             DecisionTreeNode.new(
@@ -106,9 +106,10 @@ class DecisionTreeNode
             self.try_finish_no_more_attributes
             )
         if val
+            @next_attribute = @tree.class_var
             self.children << DecisionTreeNode.new(
                 tree=@tree, parent=self,
-                attribute=@tree.class_var, value=val,
+                variable=@tree.class_var, value=val,
                 entropy=0, conditions=self.full_conditions
                 )
         else

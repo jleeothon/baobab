@@ -28,7 +28,7 @@ class Dataset < Array
     # Returns an array of the values of an attribute in the dataset.
     # Careful: it's empty on an empty set.
     def column_values attribute
-        Set.new(self.map{|row| row[attribute]}).to_a
+        self.map{|row| row[attribute]}.to_a.uniq
     end
 
     # Gets a subset with given conditions. Keys must be of the same type as
