@@ -1,6 +1,6 @@
 # baobab
 
-An engine for decision trees using ID3
+An implementation of the ID3 (Iterative Dichotomiser 3) in Ruby
 
 ## How to run the tests
 
