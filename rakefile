@@ -17,17 +17,12 @@ task :console do
     sh "irb -I lib -r baobab.rb"
 end
 
-task :tests do
-    test_files = Rake::FileList.new "test/test_*.rb"
+task :test, [:pattern] do |t, args|
+    if args[:pattern].nil?
+        test_files = Rake::FileList.new "test/test_*.rb"
     test_files.each do |test_file|
         ruby "-I lib #{test_file}"
     end
-end
-
-task :test, [:pattern] do |t, args|
-    if args[:pattern].nil?
-        STDERR.puts "Please provide a filename pattern in square brackets"
-        Rake::Task[:help].invoke
     else
         test_files = Rake::FileList.new "test/test_#{args[:pattern]}.rb"
         test_files.each do |test_file|
