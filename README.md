@@ -1,4 +1,4 @@
-# baobab
+# baobab [![Build Status](https://travis-ci.org/jleeothon/baobab.svg?branch=master)](https://travis-ci.org/jleeothon/baobab)
 
 An implementation of the ID3 (Iterative Dichotomiser 3) in Ruby
 
