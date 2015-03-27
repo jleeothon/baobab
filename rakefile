@@ -7,11 +7,10 @@ task :help do
     puts "  console          starts a console loaded with baobab"
     puts "  help             shows this help text"
     puts "  run[<filename>]  runs <pattern>"
-    puts "  test[<pattern>]  runs test/test_<pattern>.rb"
-    puts "  tests            runs tests"
+    puts "  test[<pattern>]  runs test/test_<pattern>.rb or all tests"
 end
 
-task :default => [:help]
+task :default => [:test]
 
 task :console do
     sh "irb -I lib -r baobab.rb"
