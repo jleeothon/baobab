@@ -1,11 +1,8 @@
-description = File::read('./README.md')
-
 Gem::Specification.new do |s|
   s.name        = 'baobab'
-  s.version     = '0.1.0'
+  s.version     = '0.1.1'
   s.date        = '2015-03-22'
   s.summary     = "ID3 decision trees for machine learning in Ruby"
-  s.description = description
   s.authors     = ["Johnny E. Lee Othon"]
   s.email       = 'jleeothon@gmail.com'
   s.files       = [

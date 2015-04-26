@@ -4,8 +4,8 @@ load 'baobab.rb'
 
 class TestWeather < MiniTest::Test
     def setup
-        @dataset = Dataset::from_json('test/weather.json')
-        @tree = DecisionTree.new @dataset, 'play'
+        @dataset = Baobab::Dataset::from_json('test/weather.json')
+        @tree = Baobab::DecisionTree.new @dataset, 'play'
     end
 
     # Compare to Weka's

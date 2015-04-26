@@ -4,8 +4,8 @@ load 'baobab.rb'
 
 class TestTransportation < MiniTest::Test
     def setup
-        @dataset = Dataset::from_json("test/transportation.json")
-        @tree = DecisionTree.new @dataset, 'transportation'
+        @dataset = Baobab::Dataset::from_json("test/transportation.json")
+        @tree = Baobab::DecisionTree.new @dataset, 'transportation'
     end
 
     def test_tree_representation
