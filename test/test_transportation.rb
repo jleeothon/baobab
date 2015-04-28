@@ -25,7 +25,7 @@ class TestTransportation < MiniTest::Test
     end
 
     def test_from_json
-        example = {"gender"=>"male", "owns car"=>"0", "cost"=>"cheap", "income"=>"low", "transportation"=>"bus"}
+        example = {"gender"=>"male", "owns car"=>"0", "income"=>"low", "transportation"=>"bus", "cost"=>"cheap"}
         assert_includes @dataset, example
     end
 
@@ -39,7 +39,7 @@ class TestTransportation < MiniTest::Test
     end
 
     def test_query_2
-        r = @tree.query({"gender"=>"female", "owns car"=>1, "cost"=>"cheap", "income"=>"high"})
+        r = @tree.query({"owns car"=>1, "cost"=>"cheap", "income"=>"high", "gender"=>"female"})
         assert_equal 'train', r
     end
 end
